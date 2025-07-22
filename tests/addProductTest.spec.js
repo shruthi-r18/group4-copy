@@ -23,7 +23,7 @@ test('validate-all fields in product page',async({page})=>{
 
     const prodpage=new addProductPage(page);
     await prodpage.goto()
-    await prodpage.login(usercredential.username,usercredential[0].password)
+    await prodpage.login(usercredential.username,usercredential.password)
 
     
     await prodpage.validateAllFieldsArePresent()
