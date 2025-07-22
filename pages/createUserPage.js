@@ -13,21 +13,30 @@ class createUserPage {
     }
   
     async login(username, password) {
-      // await this.page.fill(this.username, username);
-      // await this.page.fill(this.password, password);
-      // await this.page.click(this.loginButton);
-      // return await this.page.url();
       await this.page.fill(this.username, username);
-    await this.page.fill(this.password, password);
-    await this.page.click(this.loginButton);
-     // Return the URL after login
-     const message = await this.page.locator(this.errorMessageForBlankUsername).textContent();
-    if (!message) { 
-      throw new Error('Error message for blank username not found');
-    }
-    console.log('Error message for blank username:', message);
-
-         return message ; // Return the error message if present
+      await this.page.fill(this.password, password);
+      await this.page.click(this.loginButton);
+  
+      // 1️⃣ Check DOM-based error (for blank fields)
+      try {
+        const errorLocator = this.page.locator(this.domErrorMessage);
+        if (await errorLocator.isVisible({ timeout: 2000 })) {
+          const message = await errorLocator.textContent();
+          return message.trim();
+        }
+      } catch (e) {
+        console.log('No DOM error message found.');
+      }
+  
+      // 2️⃣ Check HTML5 browser validation message (for invalid credentials)
+      const usernameValidationMsg = await this.page.$eval(this.username, el => el.validationMessage);
+      if (usernameValidationMsg) return usernameValidationMsg;
+  
+      const passwordValidationMsg = await this.page.$eval(this.password, el => el.validationMessage);
+      if (passwordValidationMsg) return passwordValidationMsg;
+  
+      // 3️⃣ Assume login success if no error found
+      return '';
     }
   }
   
