@@ -6,9 +6,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "CRM project",
   "devDependencies": {
     "@playwright/test": "^1.54.1",
     "@types/node": "^24.0.14"
+  },
+  "directories": {
+    "test": "tests"
   }
 }
