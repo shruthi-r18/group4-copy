@@ -1,5 +1,3 @@
-// import { error } from "console";
-// import test from "node:test";
 
 export const credentials = [
   {
@@ -42,8 +40,4 @@ export const expectedUrls = {
   loginSuccess: 'http://49.249.28.218:8098/',
 };
 
-// module.exports = {
-//   credentials,
-//   URLs,
-//   expectedUrls,
-// };
+

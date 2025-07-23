@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { CreateUserPage } from '../pages/createUserPage';
-import { credentials, URLs, expectedUrls } from '../testdata/createUserData';
+import { CreateUserPage } from '../pages/loginPage';
+import { credentials, URLs, expectedUrls } from '../testdata/loginData';
 // This test suite validates the login functionality of the NinjaHrm application
 // It checks both valid and invalid login scenarios using the provided credentials  
 test.describe('NinjaHrm - Login validations', () => {
