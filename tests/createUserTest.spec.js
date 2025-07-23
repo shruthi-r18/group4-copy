@@ -1,18 +1,22 @@
 import { test, expect } from '@playwright/test';
-import {createUserPage} from '../pages/createUserPage';
-import {credentials, URLs, expectedUrls } from '../testdata/createUserData';
-
+import { CreateUserPage } from '../pages/createUserPage';
+import { credentials, URLs, expectedUrls } from '../testdata/createUserData';
+// This test suite validates the login functionality of the NinjaHrm application
+// It checks both valid and invalid login scenarios using the provided credentials  
 test.describe('NinjaHrm - Login validations', () => {
-  for (const data of credentials) {
+  credentials.forEach((data) => {
     test(`${data.testname}`, async ({ page }) => {
-      const CreateUserPage = new createUserPage(page);
-      const actualUrl = await CreateUserPage.goto(URLs.baseURL);
+      const createUserPage = new CreateUserPage(page);
+      const actualUrl = await createUserPage.goto(URLs.baseURL);
+      // Validate the URL after navigation
       expect(actualUrl).toMatch(expectedUrls.loginSuccess);
-      
+
       // Perform login with each test data
-      const errorMsg =await CreateUserPage.login(data.username, data.password);   
+      const errorMsg = await createUserPage.login(data.username, data.password);
+      console.log('Error message:', errorMsg);
       // Check if the error message matches the expected error
       expect(errorMsg).toContain(data.error);
-});
-}
+     
+    });
+  });
 });

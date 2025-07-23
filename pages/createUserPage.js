@@ -1,44 +1,56 @@
-class createUserPage {
-    constructor(page) {
-      this.page = page;
-      this.username = '#username';
-      this.password = '#inputPassword';
-      this.loginButton = 'button[type="submit"]';
-    }
-  
-    async goto(url) {
-      await this.page.goto(url);
-      await this.page.waitForLoadState('networkidle');
-      return await this.page.url();
-    }
-  
-    async login(username, password) {
-      await this.page.fill(this.username, username);
-      await this.page.fill(this.password, password);
-      await this.page.click(this.loginButton);
-  
-      // 1️⃣ Check DOM-based error (for blank fields)
-      try {
-        const errorLocator = this.page.locator(this.domErrorMessage);
-        if (await errorLocator.isVisible({ timeout: 2000 })) {
-          const message = await errorLocator.textContent();
-          return message.trim();
-        }
-      } catch (e) {
-        console.log('No DOM error message found.');
-      }
-  
-      // 2️⃣ Check HTML5 browser validation message (for invalid credentials)
-      const usernameValidationMsg = await this.page.$eval(this.username, el => el.validationMessage);
-      if (usernameValidationMsg) return usernameValidationMsg;
-  
-      const passwordValidationMsg = await this.page.$eval(this.password, el => el.validationMessage);
-      if (passwordValidationMsg) return passwordValidationMsg;
-  
-      // 3️⃣ Assume login success if no error found
-      return '';
-    }
+class CreateUserPage {
+  constructor(page) {
+    this.page = page;
   }
-  
-  module.exports = { createUserPage };
-  
+
+  username = '#username';
+  password = '#inputPassword';
+  loginButton = 'button[type="submit"]';
+  adminConsoleButton = 'div.nav-link >> li:has-text("Admin Console")';
+  dropdown = 'div.dropdown';
+  createUser = 'div:has-text("Create User")';
+  viewUser = 'div:has-text("View User")';
+
+  errorMessageForBlankUsername = '.invalid-feedback';
+  errorMessageForBlankPassword = '.invalid-feedback';
+
+  usersFullName = 'input[name="empName"]';
+  usersMobileNo = 'input[name="mobileNo"]';
+  usersEmail = 'input[name="email"]';
+  usersUsername = 'input[name="username"]';
+  usersPassword = 'input[name="password"]';
+
+  async goto(url) {
+    await this.page.goto(url);
+    await this.page.waitForLoadState('networkidle');
+    return this.page.url();
+  }
+ 
+
+  async login(username, password) {
+    await this.page.fill(this.username, username);
+    await this.page.fill(this.password, password);
+    await this.page.click(this.loginButton);
+   
+   // ✅ Check HTML5 validation messages only if fields are empty
+  if (username=== '') {
+    return await this.page.locator(this.errorMessageForBlankUsername).textContent();
+  }
+
+  if (password=== '') {
+    return await this.page.locator(this.errorMessageForBlankPassword).textContent();
+  }
+
+  // ✅ Fallback: check if login failed by still being on login page
+  const stillOnLogin = await this.page.locator(this.loginButton).isVisible();
+  if (stillOnLogin) {
+    return 'Invalid Credentials';
+  }
+
+  // ✅ Login success assumed
+  return '';
+}
+
+}
+
+module.exports = { CreateUserPage };
