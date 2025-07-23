@@ -38,9 +38,10 @@ async clickCampaignsTab(){
 }
 
 async clickCreateCampaign(){
+
     await this.page.click(this.createCampaign)
 }
-async createCampaignWithAllFields(data){
+async createCampaignWithFields(data){
 
     await this.page.fill(this.campaignNameField,data.name);
     await this.page.fill(this.campaignStatusField,data.status);
@@ -50,10 +51,25 @@ async createCampaignWithAllFields(data){
     await this.page.fill(this.descriptionField,data.description);
 
 }
+
+async createCampaignWithMandatoryFields(data){
+
+    await this.page.fill(this.campaignNameField,data.name);
+    await this.page.fill(this.targetSizeField,data.targetSize);
+    
+
+}
 async clickCreateCampaignButton(){
 
     await this.page.click(this.createCampaignButton);
 }
+async getFieldValidationMessage(fieldName) {
+
+    return await this.page.evaluate((name) => {
+        return document.querySelector(`[name="${name}"]`).validationMessage;
+    }, fieldName);
+}
+
 
 
 }
