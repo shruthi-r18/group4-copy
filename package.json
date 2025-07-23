@@ -6,12 +6,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "CRM project",
+  "description": "",
   "devDependencies": {
     "@playwright/test": "^1.54.1",
-    "@types/node": "^24.0.14"
-  },
-  "directories": {
-    "test": "tests"
+    "@types/node": "^24.0.14",
+    "allure-playwright": "^3.3.2"
   }
 }
