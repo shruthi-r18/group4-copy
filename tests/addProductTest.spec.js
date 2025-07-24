@@ -1,15 +1,18 @@
 import {test,expect} from '@playwright/test'
-
 import { addProductPage } from '../pages/addProductPage'
+import { testdata } from '../testdata/productData'
 
 
-import { usercredential } from '../testdata/productData'
 test('validate that user click on product tab',async({page})=>{
     const prodpage=new addProductPage(page);
-    await prodpage.goto()
-    await prodpage.login(usercredential.username,usercredential.password)
+    await prodpage.goto(testdata.url.baseUrl)
+    await prodpage.login(testdata.usercredential.username,testdata.usercredential.password)
     await prodpage.userClickOnProductTab();
+    
+ 
 })
+
+
 
 test('validate-all fields in product page',async({page})=>{
     //step1:login to application
@@ -22,12 +25,23 @@ test('validate-all fields in product page',async({page})=>{
     //step2:clicking on product tab
 
     const prodpage=new addProductPage(page);
-    await prodpage.goto()
-    await prodpage.login(usercredential.username,usercredential.password)
-
-    
+    await prodpage.goto(testdata.url.baseUrl) 
+    await prodpage.login(testdata.usercredential.username,testdata.usercredential.password) 
+    await prodpage.userClickOnProductTab(); 
+   
     await prodpage.validateAllFieldsArePresent()
 
 
+
+})
+
+test('User enters valid product details',async({page})=>{
+
+    const prodpage=new addProductPage(page)
+    await prodpage.goto(testdata.url.baseUrl) 
+    await prodpage.login(testdata.usercredential.username,testdata.usercredential.password) 
+    await prodpage.userClickOnProductTab();
+    await prodpage.userClickOnAddProductBtn();
+    await prodpage.userentervalidproductdetails();
 
 })
