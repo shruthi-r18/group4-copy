@@ -70,6 +70,14 @@ async getFieldValidationMessage(fieldName) {
     }, fieldName);
 }
 
+async setExpectedCloseDateRaw(value) {
+    await this.page.evaluate(({ selector, val }) => {
+        document.querySelector(selector).value = val;
+    }, { selector: this.expectedCloseDateField, val: value });
+    await this.page.waitForTimeout(10000);
+    
+}
+
 
 
 }
