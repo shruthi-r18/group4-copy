@@ -28,7 +28,7 @@ class CreateUserPage {
   if (password=== '') {
     return await this.page.locator(this.errorMessageForBlankPassword).textContent();
   }
-  
+  await this.page.waitForTimeout(2000);
 
   // ✅ Fallback: check if login failed by still being on login page
   const stillOnLogin = await this.page.locator(this.loginButton).isVisible();
