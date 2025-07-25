@@ -1,4 +1,4 @@
-class CreateUserPage {
+class LoginPage {
   constructor(page) {
     this.page = page;
   }
@@ -29,7 +29,6 @@ class CreateUserPage {
     return await this.page.locator(this.errorMessageForBlankPassword).textContent();
   }
   await this.page.waitForTimeout(2000);
-
   // ✅ Fallback: check if login failed by still being on login page
   const stillOnLogin = await this.page.locator(this.loginButton).isVisible();
   if (stillOnLogin) {
@@ -42,4 +41,4 @@ class CreateUserPage {
 
 }
 
-module.exports = { CreateUserPage };
+module.exports = { LoginPage };
