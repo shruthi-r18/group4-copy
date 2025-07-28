@@ -12,11 +12,11 @@ export const testdata = {
         prodpagesuccessurl:'http://49.249.28.218:8098/products'
     },
     validproddata:{
-        ProductName : faker.commerce.productName,
+        ProductName : faker.commerce.productName.toString(),
         SelectCategory:'Electronics',
         Quantity:'5',
         PricePerUnit:'550',
-        //SelectVendor:'Select a Vendor'
+        SelectVendor:' '
     }
 
 };
@@ -24,39 +24,38 @@ export const testdata = {
 export const productTestcases=[
     {
         name:'valid product details',
-        data:testdata.proddata,
+        data:testdata.validproddata,
         expectError:false
     },
     {
         name:'blank product name',
-        data:{...testdata.proddata,ProductName:''},
-        expectError: 'Please fill out this field'
+        data:{...testdata.validproddata,ProductName:''},
+        expectError: { field: 'ProductName', message: 'Please fill out this field.' }
     },
     {
         name : 'blank SelectCategory',
-        data:{...testdata.proddata,SelectCategory:''},
-        expectError: 'Please fill out this field'
+        data:{...testdata.validproddata,SelectCategory:''},
+        expectError: { field: 'SelectCategory', message: 'Please select an item in the list.' }
     },
     {
          name : 'blank Quantity',
-        data:{...testdata.proddata,Quantity:''},
-        expectError: 'Please fill out this field'
+        data:{...testdata.validproddata,Quantity:''},
+         expectError: { field: 'Quantity', message: 'Please fill out this field.' }
 
     },
     {
         name : 'blank PricePerUnit',
-        data:{...testdata.proddata,PricePerUnit:''},
-        expectError: 'Please fill out this field'
+        data:{...testdata.validproddata,PricePerUnit:''},
+       expectError: { field: 'PricePerUnit', message: 'Please fill out this field.' }
 
     },
-    /*
     {
         name : 'blank SelectVendor',
         data:{...testdata.proddata,SelectVendor:''},
-        expectError: 'Please fill out this field'
+        expectError:{field:'SelectVendor',message:'Please select an item in the list.'}
 
     }
- */
+ 
 
 ]
 

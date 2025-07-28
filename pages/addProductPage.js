@@ -57,16 +57,20 @@ class addProductPage {
 
         const { ProductName, SelectCategory, Quantity, PricePerUnit, SelectVendor } = data;
 
-        await this.page.fill(this.productName,testdata.ProductName || '')
+        await this.page.fill(this.productName,ProductName || '')
         await this.page.waitForTimeout(2000)
 
         // await this.page.locator(this.categoryDropdown).selectOption({label:testdata.proddata.SelectCategory})
         // await this.page.waitForTimeout(5000)
-        await this.page.selectOption(this.categoryDropdown,{label: SelectCategory || ''})
+        if (SelectCategory) {
+    await this.page.selectOption(this.categoryDropdown, { label: SelectCategory });
+  }
         await this.page.fill(this.quantity,Quantity || '')
         await this.page.fill(this.pricePerUnit,PricePerUnit || '')
-        //await this.page.selectOption(this.vendorDropdown,{label:SelectVendor || ''})
 
+        if(SelectVendor&&SelectVendor.trim() !== ''){
+            await this.page.selectOption(this.vendorDropdown, { label: SelectVendor})
+        }
 
     }
 
