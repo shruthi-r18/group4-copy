@@ -68,7 +68,7 @@ class addProductPage {
         await this.page.fill(this.quantity,Quantity || '')
         await this.page.fill(this.pricePerUnit,PricePerUnit || '')
 
-        if(SelectVendor&&SelectVendor.trim() !== ''){
+        if(SelectVendor){
             await this.page.selectOption(this.vendorDropdown, { label: SelectVendor})
         }
 
@@ -76,6 +76,12 @@ class addProductPage {
 
     async userclickonaddbutton(){
         await this.page.click(this.addButton)
+    }
+
+    async userenternumericvalue(){
+       
+    return await this.productName.inputValue();
+  
     }
 
     async validateAllFieldsArePresent() {
