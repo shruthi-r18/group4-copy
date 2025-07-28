@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
-import { testdata } from '../testdata/productData';
+import { testdata,productTestcases } from '../testdata/productData';
+
 
 
 class addProductPage {
@@ -48,33 +49,39 @@ class addProductPage {
         await addProductButton.click();
     }
 
-    async userentervalidproductdetails(){
-        
-        await this.page.fill(this.productName,testdata.proddata.ProductName)
+    async userentervalidproductdetails(data){
+        //JavaScript object destructuring --- 
+        //It extracts values from the data object and assigns them to variables with the same names.
+        //ProductName || ''  (logical or operator) --  ensures you always pass a defined string 
+        // playwright may show error or exception if it is an empty string
+
+        const { ProductName, SelectCategory, Quantity, PricePerUnit, SelectVendor } = data;
+
+        await this.page.fill(this.productName,ProductName || '')
         await this.page.waitForTimeout(2000)
 
         // await this.page.locator(this.categoryDropdown).selectOption({label:testdata.proddata.SelectCategory})
         // await this.page.waitForTimeout(5000)
-        const dropdown = this.page.locator(this.categoryDropdown);
-        await dropdown.waitFor({ state: 'visible' });
-        const options = await dropdown.locator('option').allInnerTexts();
-        console.log('Available options:', options);
-        await dropdown.selectOption({ label: testdata.proddata.SelectCategory });
+        if (SelectCategory) {
+    await this.page.selectOption(this.categoryDropdown, { label: SelectCategory });
+  }
+        await this.page.fill(this.quantity,Quantity || '')
+        await this.page.fill(this.pricePerUnit,PricePerUnit || '')
 
-  // Optional assertion
-        
-        // const cstdropdown=this.page.locator(this.categoryDropdown)
-        // await cstdropdown.waitFor({state:'visible',timeout:15000})
-        // await this.page.waitForSelector(`select[name="productCategory"] >> text=${testdata.proddata.SelectCategory}`, { timeout: 10000 });
+        if(SelectVendor){
+            await this.page.selectOption(this.vendorDropdown, { label: SelectVendor})
+        }
 
-        // await this.page.fill(this.quantity,testdata.proddata.Quantity);
-        // await this.page.fill(this.pricePerUnit,testdata.proddata.PricePerUnit)
-        // const vendropdown=this.page.locator(this.vendorDropdown)
-        // await vendropdown.waitFor({state:'visible',timeout:15000})
-        // await vendropdown.selectOption({label:testdata.proddata.SelectVendor})
-        // await this.page.waitForTimeout(3000)
+    }
 
+    async userclickonaddbutton(){
+        await this.page.click(this.addButton)
+    }
 
+    async userenternumericvalue(){
+       
+    return await this.productName.inputValue();
+  
     }
 
     async validateAllFieldsArePresent() {
