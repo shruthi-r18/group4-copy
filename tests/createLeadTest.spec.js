@@ -1,26 +1,24 @@
 import { test, expect } from '@playwright/test';
-import loginPage from '../pages/loginPage';
-import { credentials, URLs, expectedUrls } from '../testdata/createUserData';
-import { createLeadPage } from '../pages/createLeadPage';
-import { leadData } from '../testdata/leadData';
+import {createLeadPage} from '../pages/createLeadPage';
+import {leadData} from '../testdata/leadData'
+
 
 test('create Lead with Details',async ({ page }) => {
 
+const CreateLeadPage= new createLeadPage(page);
 
-const LoginPage = new loginPage(page);
+    await CreateLeadPage.goto(leadData.URLs.url);
+    //await page.setViewportSize({ width: 1850, height: 1080 });
+    page.setDefaultTimeout(60000);
+    await CreateLeadPage.login(leadData.login.username,leadData.login.password);
+    await expect(page).toHaveURL(leadData.URLs.successLoginUrl);
+   
+    await CreateLeadPage.clickLeadsTab();
+    await CreateLeadPage.clickCreateLead();
 
-const actualUrl = await LoginPage.goto(URLs.baseURL);
-page.setDefaultTimeout(80000);
-
-expect(actualUrl).toMatch(expectedUrls.loginSuccess);
-
-// Perform login with each test data
-const errorMsg = await LoginPage.login("rmgyantra", "rmgy@9999");
-
-//await CreateLeadPage.createLeadwithDetails(leadData.leadCreationdata);
-// Add assertions to verify lead creation success   
-// const successMessage = await page.locator('.success-message'); // Adjust the selector based on your application
+    await CreateLeadPage.createLeadwithDetails(leadData.leadCreationdata);
+    await CreateLeadPage.clickCreateLeadButton();
+        
+    await expect(page).toHaveURL(leadData.URLs.successLeadCreationURL);
 }
 );
-
-
