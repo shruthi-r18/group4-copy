@@ -2,7 +2,14 @@
   "name": "ninja_hrm_playwright",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "report": "npx playwright show-report",
+    "install:browsers": "npx playwright install --with-deps",
+    "clean": "rm -rf playwright-report test-results"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
