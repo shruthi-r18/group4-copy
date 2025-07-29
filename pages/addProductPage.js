@@ -63,8 +63,8 @@ class addProductPage {
         // await this.page.locator(this.categoryDropdown).selectOption({label:testdata.proddata.SelectCategory})
         // await this.page.waitForTimeout(5000)
         if (SelectCategory) {
-    await this.page.selectOption(this.categoryDropdown, { label: SelectCategory });
-  }
+        await this.page.selectOption(this.categoryDropdown, { label: SelectCategory });
+        }
         await this.page.fill(this.quantity,Quantity || '')
         await this.page.fill(this.pricePerUnit,PricePerUnit || '')
 

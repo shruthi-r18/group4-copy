@@ -1,5 +1,6 @@
 
 import {faker} from '@faker-js/faker'
+import { type } from 'os';
 export const testdata = {
 
     usercredential:{
@@ -10,10 +11,11 @@ export const testdata = {
     url:{
         baseUrl : 'http://49.249.28.218:8098',
         successloginurl:'http://49.249.28.218:8098/dashboard',
+        createprodpageurl:'http://49.249.28.218:8098/create-product',
         prodpagesuccessurl:'http://49.249.28.218:8098/products'
     },
     validproddata:{
-        ProductName : faker.commerce.productName(),
+        ProductName :  faker.commerce.productName(),
         SelectCategory:'Electronics',
         Quantity:'5',
         PricePerUnit:'550',
@@ -29,15 +31,21 @@ export const productTestcases=[
         expectError:false
     },
     {
+        name:'Validate product  Id is read only in product page',
+        data:testdata.validproddata,
+        checkReadOnlyField:{field:'ProductID'}
+
+    },
+    {
         name:'blank product name',
         data:{...testdata.validproddata,ProductName:''},
         expectError: { field: 'ProductName', message: 'Please fill out this field.' },
         fieldTypeCheck:null
     },
     {
-        name:'validate product name field is not allowing to enter numeric value',
+        name:'validate product name field should not be only numeric ',
         data: {...testdata.proddata,ProductName:'12345'},
-        expectError:'Product name cannot be numeric'
+        expectError:{field: 'ProductName',message:'Product name cannot be numeric'}
         
     },
 
@@ -46,6 +54,32 @@ export const productTestcases=[
         data:testdata.validproddata,
         expectError:false,
         fieldTypeCheck:{field:'SelectCategory',type:'dropdown'}
+
+        },
+        {
+        name:'validates Select Category field is dropdown and lists items',
+        data:testdata.validproddata,
+        expectError:false,
+        fieldTypeCheck:{field:'SelectCategory',type:'dropdown',
+            expectedoptions:[
+                'Select a Category',
+                'Electronics',
+                'Furniture',
+                'Electricals',
+                'Apparels',
+                'Others'
+            ]
+        }
+
+        },
+        {
+            name: 'Validate select vendor dropdown  lists items',
+            data:testdata.validproddata,
+            expectError:false,
+            fieldTypeCheck:{
+                field:'SelectVendor',type:'dropdown',
+                minoptions:2
+            }
 
         },
 
@@ -59,6 +93,18 @@ export const productTestcases=[
          name : 'blank Quantity',
         data:{...testdata.validproddata,Quantity:''},
          expectError: { field: 'Quantity', message: 'Please fill out this field.' }
+
+    },
+    {
+        name: 'Validate quantity field is diaplyed with default value 0',
+        data:testdata.validproddata,
+        expectdefaultvalue:{field:'Quantity'}
+
+    },
+    {
+        name: 'Validate PricePerUnit field is diaplyed with default value 0',
+        data:testdata.validproddata,
+        expectdefaultvalue:{field:'PricePerUnit'}
 
     },
     {
@@ -83,7 +129,7 @@ export const productTestcases=[
 
     },
     {
-        name : 'provide productname with one character',
+        name : 'provide productname with less than two characters ',
         data:{...testdata.proddata,ProductName:'a'},
         expectError:{field:'ProductName',message:'Please lengthen this text to 2 characters or more (you are currently using 1 character).'}
         
@@ -101,9 +147,22 @@ export const productTestcases=[
         data:{...testdata.validproddata,PricePerUnit:'-200'},
        expectError: { field: 'PricePerUnit', message: 'Value must be greater than or equal to 0.' },
        
+    },
+    {
+        name:'Validate success toast  message created on successful creation',
+        data:{...testdata.validproddata,ProductName:faker.commerce.productName()},
+        expectSuccessToast: true
+       
+    },
+    {
+        name:'validate same product name with same vendor doesnt create new product',
+        data: testdata.validproddata,
+        expectSuccessToast: false,
+        expectFailureToast: true
+        
 
     }
- 
+    
 
 ]
 
