@@ -18,14 +18,14 @@ pipeline {
 
     stage('Install Dependencies') {
       steps {
-        sh 'npm ci'
-        sh 'npm run install:browsers'
+        bat 'npm ci'
+        bat 'npm run install:browsers'
       }
     }
 
     stage('Run Tests') {
       steps {
-        sh 'npm test'
+       bat 'npm test'
       }
     }
 
