@@ -29,7 +29,23 @@ pipeline {
       }
     }
 
-    stage('Publish Report') {
+    stage('Generate Allure Report') {
+      steps {
+        bat 'allure generate ./allure-results --clean -o ./allure-report'
+      }
+    }
+  }
+  post {
+    always {
+      allure([
+        reportBuildPolicy: 'ALWAYS',
+        includeProperties: false,
+        jdk: '',
+        results: [[path: 'allure-results']]
+      ])
+    }
+
+    /* stage('Publish Report') {
       steps {
         publishHTML(target: [
           reportDir: 'playwright-report',
@@ -37,6 +53,6 @@ pipeline {
           reportName: 'Playwright Test Report'
         ])
       }
-    }
+    } */
   }
 }

@@ -37,7 +37,7 @@ export const URLs = {
 };
 
 export const expectedUrls = {
-  loginSuccess: 'http://49.249.28.218:8098/',
+  loginSuccess: 'http://49.249.28.218:8098/dashboard',
 };
 
 
