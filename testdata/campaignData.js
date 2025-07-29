@@ -1,5 +1,5 @@
-export const testData = {
 
+export const testData = {
 
   URLs: {
     url: 'http://49.249.28.218:8098',
@@ -18,7 +18,7 @@ export const testData = {
     targetSize: '1000',
     expectedCloseDate: '2025-12-28',
     targetAudience: 'customers',
-    description: 'This campaign targeting  customers with special offers',
+    description: 'Create campaign with all fields',
     
   },
   {
@@ -50,6 +50,7 @@ export const testData = {
       expectedValidationMessage: 'Please fill out this field'
   },
   {
+    // Test case: Target size negative
   name: 'Product Launch',
   status: 'Active',
   targetSize: '-10',
@@ -60,6 +61,7 @@ export const testData = {
   expectedValidationMessage: 'Value must be greater than or equal to 0'
 },
 {
+  // Test case: Expected close date in the past
   name: 'Product Launch',
   status: 'Active',
   targetSize: '1000',
@@ -71,24 +73,48 @@ export const testData = {
   expectedValidationMessageSuffix: ' or later'
 },
 {
+  // Test case: Expected close date in invalid format
   name: 'Product Launch',
   status: 'Active',
   targetSize: '1000',
   expectedCloseDate: '30-12-2025', // Invalid format
   targetAudience: 'customers',
   description: 'Campaign with invalid date format',
-  //expectedValidationField: 'expectedCloseDate',
- // expectedValidationMessage: 'Please enter a valid date in YYYY-MM-DD format'
+  expectedValidationField: 'expectedCloseDate',
+  expectedValidationMessage: 'Please enter a valid date in YYYY-MM-DD format'
 },
 {
+  // Test case: Expected close date with month greater than 12
   name: 'Product Launch',
   status: 'Active',
   targetSize: '1000',
   expectedCloseDate: '2026-13-21', // Invalid month
   targetAudience: 'customers',
   description: 'Campaign with month greater than 12',
-  //expectedValidationField: 'expectedCloseDate',
-  //expectedValidationMessage: 'Please enter a valid date'
+  expectedValidationField: 'expectedCloseDate',
+  expectedValidationMessage: 'Please enter a valid date'
+},
+{
+  // Test case: Edit and update campaign
+  name: 'Product Campaign',
+  status: 'Planned',
+  targetSize: '500',
+  expectedCloseDate: '2025-09-25',
+  targetAudience: 'customers',
+  description: 'Initial campaign for edit test',
+  updatedStatus: 'Active',
+  
+},
+{
+  // Test case: Campaign name with special characters and numbers
+  name: '@123!$%',
+  status: 'Active',
+  targetSize: '1000',
+  expectedCloseDate: '2025-12-28',
+  targetAudience: 'customers',
+  description: 'Campaign with invalid name',
+  expectedValidationField: 'campaignName',
+  expectedValidationMessage: 'Please fill out this field'
 }
 
 ]

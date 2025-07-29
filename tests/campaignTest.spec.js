@@ -124,26 +124,61 @@ test('expected close date field should not accept invalid format', async ({ page
   const campaign = testData.campaigns[6];
   await CampaignPage.clickCampaignsTab();
   await CampaignPage.clickCreateCampaign();
+  // Fill other fields as usual
   await CampaignPage.createCampaignWithFields({ ...campaign, expectedCloseDate: '' });
+  // Set invalid date format directly
   await CampaignPage.setExpectedCloseDateRaw(campaign.expectedCloseDate);
   await CampaignPage.clickCreateCampaignButton();
-  
-  // Assert the field value is empty
-  const value = await page.$eval('[name="expectedCloseDate"]', el => el.value);
-  expect(value).toBe('');
+
+  const validationMessage = await CampaignPage.getFieldValidationMessage(campaign.expectedValidationField);
+  expect(validationMessage).toContain(campaign.expectedValidationMessage);
 });
 test('expected close date field should not accept month greater than 12', async ({ page }) => {
   const campaign = testData.campaigns[7]; // Adjust index if needed
   await CampaignPage.clickCampaignsTab();
   await CampaignPage.clickCreateCampaign();
+  // Fill other fields as usual
   await CampaignPage.createCampaignWithFields({ ...campaign, expectedCloseDate: '' });
+  // Set invalid month directly
   await CampaignPage.setExpectedCloseDateRaw(campaign.expectedCloseDate);
   await CampaignPage.clickCreateCampaignButton();
 
-  // Assert the field value is empty
-  const value = await page.$eval('[name="expectedCloseDate"]', el => el.value);
-  expect(value).toBe('');
+  const validationMessage = await CampaignPage.getFieldValidationMessage(campaign.expectedValidationField);
+  expect(validationMessage).toContain(campaign.expectedValidationMessage);
 });
 
+test('edit and update campaign ', async ({ page }) => {
+  const campaign = testData.campaigns[8]; // Adjust index for your edit test campaign
+
+  // Create campaign first
+  await CampaignPage.clickCampaignsTab();
+  await CampaignPage.clickCreateCampaign();
+  await CampaignPage.createCampaignWithFields(campaign);
+  await CampaignPage.clickCreateCampaignButton();
+  await expect(page).toHaveURL(testData.URLs.successCampaignCreationURL);
+
+  // Edit campaign status
+  await CampaignPage.clickEditCampaignButton();
+  await CampaignPage.editCampaignFields(campaign); // This fills updatedStatus
+  await CampaignPage.clickUpdateCampaignButton();
+
+  // After updating, go back to edit or details page if needed
+  await CampaignPage.clickEditCampaignButton(); 
+
+// Now assert the status
+const updatedStatus = await page.$eval('[name="campaignStatus"]', el => el.value);
+expect(updatedStatus).toBe(campaign.updatedStatus);
+});
+
+test('campaign name field should not accept special characters and numbers', async ({ page }) => {
+  const campaign = testData.campaigns[9]; 
+  await CampaignPage.clickCampaignsTab();
+  await CampaignPage.clickCreateCampaign();
+  await CampaignPage.createCampaignWithFields(campaign);
+  await CampaignPage.clickCreateCampaignButton();
+
+  const validationMessage = await CampaignPage.getFieldValidationMessage(campaign.expectedValidationField);
+  expect(validationMessage).toContain(campaign.expectedValidationMessage);
+});
 
 
