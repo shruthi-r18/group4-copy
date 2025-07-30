@@ -14,15 +14,31 @@ class addProductPage {
         this.loginButton = 'button[type="submit"]';
 
         // Product page selectors
-        this.productTab = "//a[text()='Products']";
-        this.addProductButton = "//span[text()='Add Product']";
-        this.productId = '[name="productId"]';
-        this.productName = '[name="productName"]';
-        this.categoryDropdown = 'select[name="productCategory"]';
-        this.quantity = '[name="quantity"]';
-        this.pricePerUnit = '[name="price"]';
-        this.vendorDropdown = 'select[name="vendorId"]';
-        this.addButton = '[type="submit"]';
+        // this.productTab = "//a[text()='Products']";
+        // this.addProductButton = "//span[text()='Add Product']";
+        // this.productId = '[name="productId"]';
+        // this.productName = '[name="productName"]';
+        // this.categoryDropdown = 'select[name="productCategory"]';
+        // this.quantity = '[name="quantity"]';
+        // this.pricePerUnit = '[name="price"]';
+        // this.vendorDropdown = 'select[name="vendorId"]';
+        // this.addButton = '[type="submit"]';
+
+         this.fieldSelectorMap={
+
+      ProductTab: "//a[text()='Products']",
+      AddProductButton: "//span[text()='Add Product']",
+      ProductID: '[name="productId"]',
+      ProductName: '[name="productName"]',
+      SelectCategory: 'select[name="productCategory"]',
+      Quantity: '[name="quantity"]',
+      PricePerUnit: '[name="price"]',
+      SelectVendor: 'select[name="vendorId"]',
+      AddButton: '[type="submit"]',
+      Toast: 'div.Toastify__toast-body',
+    
+                    
+}
     }
 
     async goto(baseUrl) {
@@ -37,14 +53,14 @@ class addProductPage {
         await this.page.click(this.loginButton);
     }
     async userClickOnProductTab(){
-        const productTab = this.page.locator(this.productTab);
+        const productTab = this.page.locator(this.fieldSelectorMap.ProductTab);
         await productTab.waitFor({ state: 'visible', timeout: 15000 });
         await productTab.click();
         await expect(this.page).toHaveURL((testdata.url.prodpagesuccessurl))
     }
 
     async userClickOnAddProductBtn(){
-        const addProductButton = this.page.locator(this.addProductButton);
+        const addProductButton = this.page.locator(this.fieldSelectorMap.AddProductButton);
         await addProductButton.waitFor({ state: 'visible', timeout: 15000 } );
         await addProductButton.click();
     }
@@ -57,26 +73,93 @@ class addProductPage {
 
         const { ProductName, SelectCategory, Quantity, PricePerUnit, SelectVendor } = data;
 
-        await this.page.fill(this.productName,ProductName || '')
+        await this.page.fill(this.fieldSelectorMap.ProductName,ProductName || '')
         await this.page.waitForTimeout(2000)
 
         // await this.page.locator(this.categoryDropdown).selectOption({label:testdata.proddata.SelectCategory})
         // await this.page.waitForTimeout(5000)
         if (SelectCategory) {
-        await this.page.selectOption(this.categoryDropdown, { label: SelectCategory });
+        await this.page.selectOption(this.fieldSelectorMap.SelectCategory, { label: SelectCategory });
         }
-        await this.page.fill(this.quantity,Quantity || '')
-        await this.page.fill(this.pricePerUnit,PricePerUnit || '')
+        await this.page.fill(this.fieldSelectorMap.Quantity,Quantity || '')
+        await this.page.fill(this.fieldSelectorMap.PricePerUnit,PricePerUnit || '')
 
         if(SelectVendor){
-            await this.page.selectOption(this.vendorDropdown, { label: SelectVendor})
+            await this.page.selectOption(this.fieldSelectorMap.SelectVendor, { label: SelectVendor})
         }
 
     }
 
     async userclickonaddbutton(){
-        await this.page.click(this.addButton)
+        await this.page.click(this.fieldSelectorMap.AddButton)
     }
+
+    async validateSuccessToast(productName) {
+    const expectedMsg = `Product ${productName.substring(0, 20)} Successfully Added`;
+    const toast = this.page.locator('div.Toastify__toast-body');
+    await toast.waitFor({ state: 'visible', timeout: 3000 });
+    await expect(toast).toContainText(expectedMsg);
+  }
+
+  async validateFailureToast(productName) {
+    const expectedMsg = `The Project Name :${productName.substring(0, 20)} Already Exists`;
+    const toast = this.page.locator('div.Toastify__toast-body');
+    await toast.waitFor({ state: 'visible', timeout: 3000 });
+    await expect(toast).toContainText(expectedMsg);
+  }
+
+  async checkReadOnlyField(field,expectedurl) {
+        const selector=this.fieldSelectorMap[field]
+        const readonly=await this.page.locator(selector).getAttribute('readonly')
+        expect(readonly).toBeNull
+        console.log(`the field "{$field}"  is readonly`)
+        await expect(this.page).toHaveURL(expectedurl, { timeout: 10000 })
+
+    // await prodPage.checkReadOnlyField(checkReadOnlyField.field, testdata.url.createprodpageurl);
+    // return;
+  }
+
+  async expectdefaultvalue(field,expectedurl){
+    
+    const selector=this.fieldSelectorMap[field]
+    const value=await this.page.locator(selector).inputValue()
+    console.log(`the default value for the field "{$expectdefaultvalue.field} is {$value}`)
+    expect(value).toBe('0')
+    await expect(this.page).toHaveURL(expectedurl, { timeout: 10000 });
+
+  }
+        
+  async fieldTypedropdownvalidation(field,expectedoptions,minoptions,expectedurl){
+    const selector = this.fieldSelectorMap[field];
+
+    const tagName = await this.page.locator(selector).evaluate(el => el.tagName);
+    expect(tagName).toBe('SELECT');
+    console.log(`✅ Field "${field}" is a dropdown.`);
+    const options = await this.page.locator(selector).locator('option').allTextContents();
+    console.log(`options found in "${field} is "`,options)
+
+    if (expectedoptions) {
+          expect(options).toEqual(expectedoptions);
+        }
+          else if(minoptions){
+            expect(options.length).toBeGreaterThanOrEqual(minoptions)
+        }else{
+            expect(options.length).toBeGreaterThanOrEqual(0)
+        }
+          
+          console.log(`✅ Dropdown "${field}" options are validated.`);
+          await expect(this.page).toHaveURL(expectedurl, { timeout: 10000 });
+
+  }
+
+  async expectError(expectedurl,field,message){
+       // await expect(page).not.toHaveURL(testdata.url.prodpagesuccessurl,{ timeout: 10000 })
+        await expect(this.page).toHaveURL(expectedurl)
+        const selector = this.fieldSelectorMap[field];
+        await this.page.waitForSelector(selector, { timeout: 5000 });
+        const validationMessage = await this.page.$eval(selector, el => el.validationMessage);
+        expect(validationMessage).toBe(message);
+  }
 
     async userenternumericvalue(){
        
@@ -85,20 +168,20 @@ class addProductPage {
     }
 
     async validateAllFieldsArePresent() {
-        const productTab = this.page.locator(this.productTab);
+        const productTab = this.page.locator(this.fieldSelectorMap.ProductTab);
         await productTab.waitFor({ state: 'visible', timeout: 15000 });
         await productTab.click();
 
-        const addProductButton = this.page.locator(this.addProductButton);
+        const addProductButton = this.page.locator(this.fieldSelectorMap.AddProductButton);
         await addProductButton.waitFor({ state: 'visible', timeout: 15000 } );
         await addProductButton.click();
 
-        await this.checkField(this.productId, 'Product ID');
-        await this.checkField(this.productName, 'Product Name');
-        await this.checkField(this.quantity, 'Quantity');
-        await this.checkField(this.pricePerUnit, 'Price Per Unit');
-        await this.checkField(this.vendorDropdown, 'Vendor Dropdown');
-        await this.checkFieldWithText('button:has-text("save")', 'Save Button',1);
+        await this.checkField(this.fieldSelectorMap.ProductID, 'Product ID');
+        await this.checkField(this.fieldSelectorMap.ProductName, 'Product Name');
+        await this.checkField(this.fieldSelectorMap.Quantity, 'Quantity');
+        await this.checkField(this.fieldSelectorMap.PricePerUnit, 'Price Per Unit');
+        await this.checkField(this.fieldSelectorMap.SelectVendor, 'Vendor Dropdown');
+        await this.checkFieldWithText('button:has-text("save")', 'Save Button', 1);
         await this.checkFieldWithText('button:has-text("Cancel")', 'Cancel Button', 1);
     }
 
@@ -122,6 +205,8 @@ class addProductPage {
         throw new Error(`${fieldName} count mismatch: expected ${expectedCount}, but found ${actualCount}`);
     }
     }
+
+
 }
 
 export { addProductPage }; 
