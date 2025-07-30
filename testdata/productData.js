@@ -148,19 +148,29 @@ export const productTestcases=[
        expectError: { field: 'PricePerUnit', message: 'Value must be greater than or equal to 0.' },
        
     },
+    
+
+]
+const fixedproductname= faker.commerce.productName();
+export const productTestcasesduplicatevalidation=[
     {
         name:'Validate success toast  message created on successful creation',
-        data:{...testdata.validproddata,ProductName:faker.commerce.productName()},
+        data:{...testdata.validproddata,ProductName:fixedproductname,SelectVendor:'Vendor_32072 - (Electronics)'},
         expectSuccessToast: true
        
     },
     {
         name:'validate same product name with same vendor doesnt create new product',
-        data: testdata.validproddata,
-        expectSuccessToast: false,
+        data:{...testdata.validproddata,ProductName:fixedproductname,SelectVendor:'Vendor_32072 - (Electronics)'},
         expectFailureToast: true
-        
-
+    
+    },
+    {
+        name:'validate same product name with different vendor should create new product',
+        data: {...testdata.validproddata,ProductName:fixedproductname,SelectVendor:'Vendor_30948 - (Electronics)'},
+        expectSuccessToast: true,
+       
+    
     }
     
 
