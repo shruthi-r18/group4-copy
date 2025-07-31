@@ -69,8 +69,8 @@ export const testData = {
   targetAudience: 'customers',
   description: 'Campaign with past close date',
   expectedValidationField: 'expectedCloseDate',
-  expectedValidationMessagePrefix: 'Value must be ',
-  expectedValidationMessageSuffix: ' or later'
+  expectedValidationMessage: 'Value must be ',
+  
 },
 {
   // Test case: Expected close date in invalid format

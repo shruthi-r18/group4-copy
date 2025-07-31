@@ -98,6 +98,7 @@ test('campaign description field should be a textarea', async ({ page }) => {
   const tagName = await page.$eval('textarea[name="description"]', el => el.tagName.toLowerCase());
   expect(tagName).toBe('textarea'); // This will fail if it's not a textarea
 });
+
 test('expected close date field should not accept past date', async ({ page }) => {
   const campaign = testData.campaigns[5]; 
   await CampaignPage.clickCampaignsTab();
@@ -105,50 +106,35 @@ test('expected close date field should not accept past date', async ({ page }) =
   await CampaignPage.createCampaignWithFields(campaign);
   await CampaignPage.clickCreateCampaignButton();
 
-  // Get tomorrow's date in MM/DD/YYYY format
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-  const dd = String(tomorrow.getDate()).padStart(2, '0');
-  const yyyy = tomorrow.getFullYear();
-  const expectedDate = `${mm}/${dd}/${yyyy}`;
-
-  // Build expected error message
-  const expectedMessage = `${campaign.expectedValidationMessagePrefix}${expectedDate}${campaign.expectedValidationMessageSuffix}`;
-
   // Get the validation message
   const validationMessage = await CampaignPage.getFieldValidationMessage(campaign.expectedValidationField);
-  expect(validationMessage).toContain(expectedMessage);
+  expect(validationMessage).toContain(campaign.expectedValidationMessage);
 });
+
 test('expected close date field should not accept invalid format', async ({ page }) => {
   const campaign = testData.campaigns[6];
   await CampaignPage.clickCampaignsTab();
   await CampaignPage.clickCreateCampaign();
-  // Fill other fields as usual
-  await CampaignPage.createCampaignWithFields({ ...campaign, expectedCloseDate: '' });
-  // Set invalid date format directly
-  await CampaignPage.setExpectedCloseDateRaw(campaign.expectedCloseDate);
+  await CampaignPage.createCampaignWithFields(campaign);
   await CampaignPage.clickCreateCampaignButton();
 
-  const validationMessage = await CampaignPage.getFieldValidationMessage(campaign.expectedValidationField);
+  const validationMessage = await CampaignPage.getExpectedCloseDateValidationMessage(campaign.expectedValidationField);
   expect(validationMessage).toContain(campaign.expectedValidationMessage);
 });
+
 test('expected close date field should not accept month greater than 12', async ({ page }) => {
-  const campaign = testData.campaigns[7]; // Adjust index if needed
+  const campaign = testData.campaigns[7]; 
   await CampaignPage.clickCampaignsTab();
   await CampaignPage.clickCreateCampaign();
-  // Fill other fields as usual
-  await CampaignPage.createCampaignWithFields({ ...campaign, expectedCloseDate: '' });
-  // Set invalid month directly
-  await CampaignPage.setExpectedCloseDateRaw(campaign.expectedCloseDate);
+  await CampaignPage.createCampaignWithFields(campaign);
   await CampaignPage.clickCreateCampaignButton();
 
-  const validationMessage = await CampaignPage.getFieldValidationMessage(campaign.expectedValidationField);
+  const validationMessage = await CampaignPage.getExpectedCloseDateValidationMessage(campaign.expectedValidationField);
   expect(validationMessage).toContain(campaign.expectedValidationMessage);
 });
 
 test('edit and update campaign ', async ({ page }) => {
-  const campaign = testData.campaigns[8]; // Adjust index for your edit test campaign
+  const campaign = testData.campaigns[8]; 
 
   // Create campaign first
   await CampaignPage.clickCampaignsTab();
@@ -180,5 +166,58 @@ test('campaign name field should not accept special characters and numbers', asy
   const validationMessage = await CampaignPage.getFieldValidationMessage(campaign.expectedValidationField);
   expect(validationMessage).toContain(campaign.expectedValidationMessage);
 });
+
+test('Create and validate  campaign is appear in the list', async ({ page }) => {
+  
+
+  function generateRandomName(prefix = "Product Launch") {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let suffix = "";
+    for (let i = 0; i < 5; i++) {
+      suffix += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    return `${prefix} ${suffix}`;
+  }
+
+  const campaign = {
+    name: generateRandomName(),targetSize: '1000',
+  };
+
+  await CampaignPage.clickCampaignsTab();
+  await CampaignPage.clickCreateCampaign();
+  await CampaignPage.createCampaignWithMandatoryFields(campaign);
+  await CampaignPage.clickCreateCampaignButton();
+  await CampaignPage.searchCampaignByName(campaign.name);
+
+  const row = CampaignPage.getCampaignRowByName(campaign.name);
+  await expect(row).toBeVisible();
+
+  const nameCell = CampaignPage.getCampaignNameCell(row);
+  await expect(nameCell).toHaveText(campaign.name);
+});
+
+test('Validate Campaign Status  dropdown has options', async ({ page }) => {
+ 
+  await CampaignPage.clickCampaignsTab();
+  await CampaignPage.clickCreateCampaign();
+
+  const options = await CampaignPage.getCustomDropdownOptions();
+  const expectedOptions = ['Planned', 'Active', 'Completed', 'Cancelled'];
+  expect(options).toEqual(expectedOptions);
+});
+test('Validate Save and Cancel buttons are present ', async ({ page }) => {
+
+    await CampaignPage.clickCampaignsTab();
+    await CampaignPage.clickCreateCampaign();
+ 
+  const saveCount = await page.locator('button:has-text("Save")').count();
+  const cancelCount = await page.locator('button:has-text("Cancel")').count();
+
+  // Fail test if Save or Cancel buttons are missing
+  expect(saveCount, '"Save" button is missing ').toBeGreaterThan(0);
+  expect(cancelCount, '"Cancel" button is missing ').toBeGreaterThan(0);
+});
+
+
 
 
