@@ -3,6 +3,7 @@ pipeline {
 
   tools {
     nodejs 'NodeJS 18'
+    allure 'Allure'
   }
 
   environment {
@@ -25,7 +26,7 @@ pipeline {
 
     stage('Run Tests') {
       steps {
-       bat 'npm run campaigntest'
+       bat 'npm run logintest'
       }
     }
 

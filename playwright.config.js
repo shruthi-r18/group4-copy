@@ -33,7 +33,9 @@ export default defineConfig({
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    screenshot:"on",
+    video:"retain-on-failure",
+    trace:"on",
     headless: false, // Run tests in headless mode
   },
 
@@ -43,7 +45,8 @@ export default defineConfig({
       name: 'chromium',
       
       use: { 
-        ...devices['Desktop Chrome'] ,        
+        ...devices['Desktop Chrome'] , 
+        viewport:{width:1920,height:1080},       
         /* launchOptions: {
       args: ['--start-maximized'], 
     }*/
