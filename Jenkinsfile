@@ -9,6 +9,9 @@ pipeline {
   environment {
     HOME = "${env.WORKSPACE}"
   }
+parameters {
+  choice(name: 'TEST_SUITE', choices: ['campaigntest', 'usertest','logintest','oppurtunitytest','contacttest','leadtest','producttest','salesordertest','quotetest', 'alltests'], description: 'Select test suite to run')
+}
 
   stages {
     stage('Checkout') {
@@ -26,7 +29,8 @@ pipeline {
 
     stage('Run Tests') {
       steps {
-       bat 'npm run logintest'
+       // Use the parameter here to run the tests dynamically
+       bat "npm run ${params.TEST_SUITE}"
       }
     }
 
@@ -45,15 +49,5 @@ pipeline {
         results: [[path: 'allure-results']]
       ])
     }
-
-    /* stage('Publish Report') {
-      steps {
-        publishHTML(target: [
-          reportDir: 'playwright-report',
-          reportFiles: 'index.html',
-          reportName: 'Playwright Test Report'
-        ])
-      }
-    } */
   }
 }
