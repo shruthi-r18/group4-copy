@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    
     "alltest": "npx playwright test",
     "campaigntest": "npx playwright test campaignTest.spec",
     "logintest": "npx playwright test loginTest.spec",
@@ -14,7 +13,6 @@
     "leadtest": "npx playwright test leadTest.spec",
     "salesordertest": "npx playwright test salesOrderTest.spec",
     "quotetest": "npx playwright test quoteTest.spec",
-
     "test:headed": "npx playwright test --headed",
     "test:debug": "npx playwright test --debug",
     "report": "npx playwright show-report",
