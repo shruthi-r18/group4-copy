@@ -41,13 +41,15 @@ parameters {
     }
   }
   post {
-    always {
-      allure([
-        reportBuildPolicy: 'ALWAYS',
-        includeProperties: false,
-        jdk: '',
-        results: [[path: 'allure-results']]
-      ])
-    }
+  always {
+    allure([
+      reportBuildPolicy: 'ALWAYS',
+      includeProperties: false,
+      jdk: '',
+      results: [[path: 'allure-results']],
+      commandline: 'Allure'  // this must match the name in Jenkins Global Tool Config
+    ])
   }
+}
+
 }
