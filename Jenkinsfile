@@ -3,7 +3,7 @@ pipeline {
 
   tools {
     nodejs 'NodeJS 18'
-    allure 'Allure'
+    allure 'ALLURE_HOME'
   }
 
   environment {
@@ -47,7 +47,7 @@ parameters {
       includeProperties: false,
       jdk: '',
       results: [[path: 'allure-results']],
-      commandline: 'Allure'  // this must match the name in Jenkins Global Tool Config
+      commandline: 'ALLURE_HOME'  // this must match the name in Jenkins Global Tool Config
     ])
   }
 }
