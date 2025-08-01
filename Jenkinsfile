@@ -3,7 +3,7 @@ pipeline {
 
   tools {
     nodejs 'NodeJS 18'
-    allure 'ALLURE_HOME'
+    allure 'Allure'
   }
 
   environment {
@@ -43,11 +43,9 @@ parameters {
   post {
   always {
     allure([
-      reportBuildPolicy: 'ALWAYS',
-      includeProperties: false,
-      jdk: '',
+      commandline: 'Allure',  // This name must match the name you set above
       results: [[path: 'allure-results']],
-      commandline: 'ALLURE_HOME'  // this must match the name in Jenkins Global Tool Config
+      reportBuildPolicy: 'ALWAYS'
     ])
   }
 }
