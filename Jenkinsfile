@@ -16,7 +16,7 @@ parameters {
   stages {
     stage('Checkout') {
       steps {
-        git url: 'https://github.com/ninjahrm/Group4.git', branch: 'main'
+        git url: 'https://github.com/shruthi-r18/group4-copy.git', branch: 'main'
       }
     }
 
